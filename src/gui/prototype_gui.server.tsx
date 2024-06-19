@@ -2,7 +2,7 @@ import React, { StrictMode, useEffect, useState } from "@rbxts/react";
 import { createPortal, createRoot } from "@rbxts/react-roblox";
 import { toolbar } from "toolbar";
 import { GuiState } from "./state_control/gui_state";
-import { useAtom } from "@rbxts/charm";
+import { atom, subscribe, useAtom } from "@rbxts/charm";
 import { useEventListener, useKeyPress } from "@rbxts/pretty-react-hooks";
 import QuickMenu from "./quick_menu/quick_menu";
 import { ArrayTools } from "includes/tools/array_tools";
@@ -22,6 +22,10 @@ function UpdatePlugin() {
 }
 button.Click.Connect(UpdatePlugin);
 
+plugin.Deactivation.Connect(() => {
+  GuiState.gui_visible(false);
+})
+
 const max_no_target_distance = 100;
 function GetMouseWorldPosition() {
   const target = mouse.Target;
@@ -30,6 +34,32 @@ function GetMouseWorldPosition() {
   const camera_position = Workspace.CurrentCamera!.CFrame.Position;
   const direction = mouse.Hit.Position.sub(camera_position).Unit;
   return camera_position.add(direction.mul(max_no_target_distance));
+}
+
+
+const saved_ribon_tool = atom(plugin.GetSelectedRibbonTool());
+
+function SaveRibbonTool() {
+  //if active, the ribbon tool will be nil
+  if (plugin.IsActivated()) return;
+  saved_ribon_tool(plugin.GetSelectedRibbonTool());
+}
+
+function RestoreRibbonTool() {
+  if (!plugin.IsActivated()) return;
+  const mouse_position = UDim2.fromOffset(mouse.X, mouse.Y);
+  plugin.Deactivate();
+  plugin.SelectRibbonTool(saved_ribon_tool(), mouse_position);
+}
+
+subscribe(GuiState.gui_visible, (value) => {
+  if (!value) RestoreRibbonTool();
+})
+
+
+function ResetDropDownMenu() {
+  GuiState.drop_down_menu_visible(false);
+  GuiState.drop_down_menu_track_button(undefined);
 }
 
 const mouse = plugin.GetMouse();
@@ -41,11 +71,14 @@ function Content({ gui_ref }: { gui_ref: React.MutableRefObject<ScreenGui | unde
   const open_menu = useKeyPress(["LeftShift+F"], { actionName: "OpenMenu" });
   useEffect(() => {
     if (!open_menu) return;
+
+    SaveRibbonTool();
+    //activates the plugin to get the mouse position
+    plugin.Activate(false);
     const mouse_position = UDim2.fromOffset(mouse.X, mouse.Y);
 
     GuiState.gui_visible(true);
-    GuiState.drop_down_menu_visible(false);
-    GuiState.drop_down_menu_track_button(undefined);
+    ResetDropDownMenu();
 
     const mouse_world_position = GetMouseWorldPosition();
     GuiState.mouse_world_position(mouse_world_position);
@@ -60,9 +93,12 @@ function Content({ gui_ref }: { gui_ref: React.MutableRefObject<ScreenGui | unde
     const on_gui = ArrayTools.IncludesOneOf(objects, gui_ref.current.GetDescendants());
     if (on_gui) return;
 
+    //restores ribbon tool
+    const mouse_position = UDim2.fromOffset(mouse.X, mouse.Y);
+    plugin.SelectRibbonTool(saved_ribon_tool(), mouse_position);
+
     GuiState.gui_visible(false);
-    GuiState.drop_down_menu_track_button(undefined);
-    GuiState.drop_down_menu_visible(false);
+    ResetDropDownMenu();
   }, {
     connected: menu_visible
   })
