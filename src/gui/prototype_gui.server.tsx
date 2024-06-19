@@ -18,12 +18,14 @@ function UpdatePlugin() {
   const new_active = !PluginState.plugin_active();
   button.SetActive(new_active);
   GuiState.gui_visible(false);
+  ResetDropDownMenu();
   PluginState.SetPluginActive(new_active);
 }
 button.Click.Connect(UpdatePlugin);
 
 plugin.Deactivation.Connect(() => {
   GuiState.gui_visible(false);
+  ResetDropDownMenu();
 })
 
 const max_no_target_distance = 100;
