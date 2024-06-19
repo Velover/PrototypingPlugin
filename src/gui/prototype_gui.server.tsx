@@ -8,7 +8,7 @@ import QuickMenu from "./quick_menu/quick_menu";
 import { ArrayTools } from "includes/tools/array_tools";
 import { PluginState } from "./state_control/plugin_state";
 import { CleanUp } from "cleaning/clean_up";
-import { Players, Workspace } from "@rbxts/services";
+import { Workspace } from "@rbxts/services";
 import DropDownMenu from "./drop_down_menu/drop_down_menu";
 
 const button = toolbar.CreateButton("TogglePlugin", "Activate", "rbxassetid://18111302308", "Shift+F");
@@ -32,7 +32,7 @@ function GetMouseWorldPosition() {
   return camera_position.add(direction.mul(max_no_target_distance));
 }
 
-const mouse = Players.LocalPlayer.GetMouse();
+const mouse = plugin.GetMouse();
 function Content({ gui_ref }: { gui_ref: React.MutableRefObject<ScreenGui | undefined> }) {
   const [menu_position, SetMenuPosition] = useState(new UDim2());
   const menu_visible = useAtom(GuiState.gui_visible);
