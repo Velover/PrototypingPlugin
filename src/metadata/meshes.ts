@@ -558,12 +558,12 @@ export namespace Meshes {
     }],
   ])
 
-  const keys = TableTools.GetKeys(meshes);
+  const mesh_keys = TableTools.GetKeys(meshes);
   export function SetRecentMeshKey(mesh: EMesh) {
-    const index = keys.indexOf(mesh);
-    ArrayTools.SwapIndexes(keys, 0, index);
+    ArrayTools.RemoveElementFromArray(mesh_keys, mesh);
+    mesh_keys.unshift(mesh);
   }
   export function GetMeshKeys() {
-    return table.clone(keys);
+    return table.clone(mesh_keys);
   }
 }

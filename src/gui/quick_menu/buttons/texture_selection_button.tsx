@@ -17,7 +17,7 @@ export default function TextureSelectionButton() {
           GuiState.drop_down_menu_track_button(button);
         }
       }>
-      {/* FIXME switch some textures because then all in order */}
+      {/* TODO use only the dark gray color in preview, otherwise the texture is not visible */}
       <TextureDisplay color={color} texture={texture} />
     </Button>
   )

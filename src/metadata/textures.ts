@@ -56,6 +56,8 @@ export namespace Textures {
     [EColor.Red, Color3.fromHex("ff0038")],
   ])
 
+
+  //FIXME some of the texture patterns don't match up
   const textures = new Map<EColor, Map<ETexture, string>>([
     [EColor.DarkGray, new Map([
       [ETexture.Texture10, "rbxassetid://18111268181"],
@@ -156,15 +158,16 @@ export namespace Textures {
   ])
 
   const color_keys = TableTools.GetKeys(colors);
-  const textures_keys = TableTools.GetKeys(textures.get(EColor.DarkGray)!);
+  const texture_keys = TableTools.GetKeys(textures.get(EColor.DarkGray)!);
 
+  //inserts everything on the first place
   export function SetRecentColorKey(color: EColor) {
-    const index = color_keys.indexOf(color);
-    ArrayTools.SwapIndexes(color_keys, index, 0);
+    ArrayTools.RemoveElementFromArray(color_keys, color);
+    color_keys.unshift(color);
   }
   export function SetRecentTextureKey(texture: ETexture) {
-    const index = textures_keys.indexOf(texture);
-    ArrayTools.SwapIndexes(textures_keys, index, 0);
+    ArrayTools.RemoveElementFromArray(texture_keys, texture);
+    texture_keys.unshift(texture);
   }
 
   export function GetColorKeys() {
@@ -172,6 +175,6 @@ export namespace Textures {
   }
 
   export function GetTextureKeys() {
-    return table.clone(textures_keys);
+    return table.clone(texture_keys);
   }
 } 
