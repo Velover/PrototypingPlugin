@@ -4,11 +4,17 @@ import SortByFillDirection from "gui/extras/SortByFillDirection";
 import { Textures } from "metadata/textures";
 import DropDownColorButton from "./drop_down_color_button";
 
-export default function ColorDropDownMenu({ fill_direction }: { fill_direction: EFillDirection }) {
-  const colors = SortByFillDirection(Textures.GetColorKeys(), fill_direction);
-  return (
-    <>
-      {colors.map((color, index) => <DropDownColorButton color={color} key={index} />)}
-    </>
-  )
+export default function ColorDropDownMenu({
+	fill_direction,
+}: {
+	fill_direction: EFillDirection;
+}) {
+	const colors = SortByFillDirection(Textures.GetColorKeys(), fill_direction);
+	return (
+		<>
+			{colors.map((color, index) => (
+				<DropDownColorButton color={color} key={index} />
+			))}
+		</>
+	);
 }

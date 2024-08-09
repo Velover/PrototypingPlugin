@@ -6,12 +6,21 @@ import { GuiState } from "gui/state_control/gui_state";
 import { Textures } from "metadata/textures";
 import DropDownTextureButton from "./drop_down_texture_button";
 
-export default function TexturesDropDownMenu({ fill_direction }: { fill_direction: EFillDirection }) {
-  const textures = SortByFillDirection(Textures.GetTextureKeys(), fill_direction);
-  const color = useAtom(GuiState.selected_color);
-  return (
-    <>
-      {textures.map((texture, index) => <DropDownTextureButton texture={texture} color={color} key={index} />)}
-    </>
-  )
+export default function TexturesDropDownMenu({
+	fill_direction,
+}: {
+	fill_direction: EFillDirection;
+}) {
+	const textures = SortByFillDirection(
+		Textures.GetTextureKeys(),
+		fill_direction,
+	);
+	const color = useAtom(GuiState.selected_color);
+	return (
+		<>
+			{textures.map((texture, index) => (
+				<DropDownTextureButton texture={texture} color={color} key={index} />
+			))}
+		</>
+	);
 }
